@@ -1,109 +1,141 @@
-"use client";
+'use client';
 
-import { Navbar } from "@/components/Navbar";
-import { BetsTable } from "@/components/BetsTable";
-import { Leaderboard } from "@/components/Leaderboard";
+import { useState } from 'react';
 
-export default function HomePage() {
+const CONTRACT_ADDRESS = '0x50aEd6E73a526E9497a200A92e8bd0D68F838f02';
+
+export default function GenLayerCookingGame() {
+  const [gameId, setGameId] = useState('game001');
+  const [ingredients, setIngredients] = useState('鸡蛋\n面粉\n牛奶\n巧克力');
+  const [answer, setAnswer] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const createGame = () => {
+    setLoading(true);
+    setResult('✅ 创建游戏请求已发送！\n\n请打开 GenLayer Studio，调用 add_game 函数完成操作。\n\n游戏ID: ' + gameId);
+    setTimeout(() => setLoading(false), 1200);
+  };
+
+  const joinGame = () => {
+    setLoading(true);
+    setResult('✅ 提交菜谱请求已发送！\n\n请在 GenLayer Studio 调用 join_game 函数，让 AI 打分。\n\n游戏ID: ' + gameId);
+    setTimeout(() => setLoading(false), 1200);
+  };
+
+  const viewGame = () => {
+    setLoading(true);
+    setResult('📋 查询中...\n\n请在 GenLayer Studio 调用 get_game 函数查看游戏详情。\n\n游戏ID: ' + gameId);
+    setTimeout(() => setLoading(false), 800);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navbar */}
-      <Navbar />
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <div className="max-w-6xl mx-auto p-8">
+        {/* 头部 */}
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <div className="text-8xl">🍳</div>
+          </div>
+          <h1 className="text-6xl font-bold tracking-tight">GenLayer 烹饪游戏</h1>
+          <p className="text-2xl text-orange-400 mt-3">AI 驱动的烹饪挑战</p>
+          <p className="text-gray-400 mt-2 font-mono text-sm">合约地址: {CONTRACT_ADDRESS}</p>
+        </div>
 
-      {/* Main Content - Padding to account for fixed navbar */}
-      <main className="flex-grow pt-20 pb-12 px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-8 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Football Prediction Betting
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              AI-powered football match predictions on GenLayer blockchain.
-              <br />
-              Create bets, make predictions, and compete for points.
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* 卡片1 - 创建游戏 */}
+          <div className="bg-zinc-900 rounded-3xl p-8 border border-zinc-700">
+            <div className="bg-orange-600 text-white text-sm font-bold px-4 py-1 inline-block rounded-full mb-6">1</div>
+            <h2 className="text-3xl font-semibold mb-6">创建新游戏</h2>
+            
+            <input 
+              type="text" 
+              value={gameId} 
+              onChange={(e) => setGameId(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 mb-6 text-lg"
+              placeholder="游戏ID"
+            />
+            
+            <textarea 
+              value={ingredients} 
+              onChange={(e) => setIngredients(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 h-40 mb-8 text-lg font-mono"
+              placeholder="食材列表（每行一个）"
+            />
+
+            <button 
+              onClick={createGame}
+              disabled={loading}
+              className="w-full bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl font-bold text-xl disabled:opacity-70"
+            >
+              {loading ? '发送中...' : '创建游戏'}
+            </button>
           </div>
 
-          {/* Main Grid Layout - 2/1 columns on desktop, stacked on mobile */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-            {/* Left Column - Bets Table (67% on desktop) */}
-            <div className="lg:col-span-8 animate-slide-up">
-              <BetsTable />
-            </div>
+          {/* 卡片2 - 加入游戏 */}
+          <div className="bg-zinc-900 rounded-3xl p-8 border border-zinc-700">
+            <div className="bg-orange-600 text-white text-sm font-bold px-4 py-1 inline-block rounded-full mb-6">2</div>
+            <h2 className="text-3xl font-semibold mb-6">加入游戏并提交菜谱</h2>
+            
+            <input 
+              type="text" 
+              value={gameId} 
+              onChange={(e) => setGameId(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 mb-6 text-lg"
+              placeholder="游戏ID"
+            />
+            
+            <textarea 
+              value={answer} 
+              onChange={(e) => setAnswer(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 h-52 mb-8 text-lg"
+              placeholder="在这里写下你的完整菜谱..."
+            />
 
-            {/* Right Column - Leaderboard (33% on desktop) */}
-            <div className="lg:col-span-4 animate-slide-up" style={{ animationDelay: "100ms" }}>
-              <Leaderboard />
-            </div>
+            <button 
+              onClick={joinGame}
+              disabled={loading}
+              className="w-full bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl font-bold text-xl disabled:opacity-70"
+            >
+              {loading ? '发送中...' : '提交菜谱'}
+            </button>
           </div>
 
-          {/* Info Section */}
-          <div className="mt-8 glass-card p-6 md:p-8 animate-fade-in" style={{ animationDelay: "200ms" }}>
-            <h2 className="text-2xl font-bold mb-4">How it Works</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">1. Create a Bet</div>
-                <p className="text-sm text-muted-foreground">
-                  Connect your wallet and create a football match prediction. Choose the teams, date, and your predicted winner.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">2. Wait for Resolution</div>
-                <p className="text-sm text-muted-foreground">
-                  After the match, the bet creator resolves the bet. GenLayer's AI verifies the actual match result.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">3. Earn Points</div>
-                <p className="text-sm text-muted-foreground">
-                  Correct predictions earn you points. Climb the leaderboard and prove your football knowledge!
-                </p>
-              </div>
-            </div>
+          {/* 卡片3 - 查看游戏 */}
+          <div className="bg-zinc-900 rounded-3xl p-8 border border-zinc-700">
+            <div className="bg-emerald-600 text-white text-sm font-bold px-4 py-1 inline-block rounded-full mb-6">3</div>
+            <h2 className="text-3xl font-semibold mb-6">查看游戏</h2>
+            
+            <input 
+              type="text" 
+              value={gameId} 
+              onChange={(e) => setGameId(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 mb-8 text-lg"
+              placeholder="输入游戏ID"
+            />
+
+            <button 
+              onClick={viewGame}
+              disabled={loading}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-2xl font-bold text-xl disabled:opacity-70"
+            >
+              {loading ? '查询中...' : '查看游戏详情'}
+            </button>
           </div>
         </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-2">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <a
-                href="https://genlayer.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
-              >
-                Powered by GenLayer
-              </a>
-              <a
-                href="https://studio.genlayer.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
-              >
-                Studio
-              </a>
-              <a
-                href="https://docs.genlayer.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
-              >
-                Docs
-              </a>
-              <a
-                href="https://github.com/genlayerlabs/genlayer-project-boilerplate"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
-              >
-                GitHub
-              </a>
+        {/* 结果区域 */}
+        {result && (
+          <div className="mt-12 p-8 bg-zinc-900 border border-orange-500/30 rounded-3xl text-lg whitespace-pre-line">
+            {result}
           </div>
+        )}
+
+        <div className="text-center mt-16 text-gray-500 text-sm">
+          当前为演示模式 • 实际合约交互请在 GenLayer Studio 中进行<br />
+          （add_game / join_game / get_game）
         </div>
-      </footer>
+      </div>
     </div>
   );
 }
